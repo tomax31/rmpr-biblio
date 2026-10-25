@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bibliographie RMPR et RNS</title>
+
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -13,8 +14,24 @@ body {
   color: #333;
   line-height: 1.6;
 }
-h1 { color: #34534a; }
+h1, h2 { color: #34534a; }
 .intro { color: #666; }
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 25px 0;
+}
+.stat {
+  background: #f0f5f2;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+.stat strong {
+  font-size: 1.4em;
+  color: #34534a;
+}
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -30,37 +47,48 @@ input, select {
 input { flex: 1; min-width: 200px; }
 #status { margin: 20px 0; color: #666; }
 .year {
-  font-size: 1.3em;
-  font-weight: bold;
-  color: #34534a;
   border-bottom: 1px solid #ddd;
   margin-top: 30px;
 }
 .reference {
   padding: 12px 0;
   border-bottom: 1px solid #eee;
+  overflow-wrap: anywhere;
 }
 .reference a { color: #246b86; }
-.tags { font-size: 12px; color: #777; }
-footer {
-  margin: 40px 0;
-  font-size: 13px;
-  color: #777;
-}
+.links { font-size: 0.85em; margin-top: 5px; }
+.links a { margin-right: 15px; }
+footer { margin: 40px 0; color: #777; font-size: 13px; }
 </style>
 </head>
+
 <body>
 
 <h1>Bibliographie des RMPR et RNS</h1>
 
 <p class="intro">
-Bibliographie issue du groupe Zotero BDA Biblio.
-Les références sont mises à jour automatiquement.
+Références issues du groupe Zotero
+<a href="https://www.zotero.org/groups/154609/bda_biblio">
+BDA Biblio</a>.
+Bibliographie mise à jour automatiquement.
 </p>
+
+<div class="stats">
+  <div class="stat">
+    Total distinct : <strong id="countAll">—</strong>
+  </div>
+  <div class="stat">
+    RMPR : <strong id="countRMPR">—</strong>
+  </div>
+  <div class="stat">
+    RNS : <strong id="countRNS">—</strong>
+  </div>
+</div>
 
 <div class="controls">
   <input id="search" type="search"
-         placeholder="Rechercher un auteur, un titre, une année...">
+    placeholder="Rechercher un auteur, un titre, une année...">
+
   <select id="tag">
     <option value="ALL">RMPR + RNS</option>
     <option value="RMPR">RMPR uniquement</option>
@@ -69,52 +97,23 @@ Les références sont mises à jour automatiquement.
 </div>
 
 <div id="status">Chargement des références Zotero...</div>
-<div id="results"></div>
+<main id="results"></main>
 
 <footer>
-Source :
-<a href="https://www.zotero.org/groups/154609/bda_biblio"
-   target="_blank" rel="noopener">
-Groupe Zotero BDA Biblio
-</a>
+Bibliographie ISO 690 (auteur-date), générée par Zotero.
 </footer>
 
 <script>
+"use strict";
+
 const GROUP = 154609;
 const TAGS = ["RMPR", "RNS"];
 const API = `https://api.zotero.org/groups/${GROUP}/items/top`;
+const STYLE = "iso690-author-date-fr";
+
 let references = [];
 
-async function fetchTag(tag) {
-  let all = [];
-  let start = 0;
-  const limit = 100;
-
-  while (true) {
-    const url = new URL(API);
-    url.searchParams.set("tag", tag);
-    url.searchParams.set("format", "json");
-    url.searchParams.set("limit", limit);
-    url.searchParams.set("start", start);
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(
-        `Erreur Zotero ${response.status} pour ${tag}`
-      );
-    }
-
-    const batch = await response.json();
-    all.push(...batch);
-
-    document.getElementById("status").textContent =
-      `${tag} : ${all.length} références récupérées...`;
-
-    if (batch.length < limit) break;
-    start += limit;
-  }
-  return all;
-}
+const el = id => document.getElementById(id);
 
 function getYear(date) {
   const match = String(date || "").match(
@@ -123,12 +122,16 @@ function getYear(date) {
   return match ? match[0] : "Sans date";
 }
 
-function authors(data) {
-  const people = (data.creators || [])
+function getAuthors(data) {
+  return (data.creators || [])
     .filter(c => ["author", "editor"].includes(c.creatorType))
     .map(c => c.name ||
-      [c.lastName, c.firstName].filter(Boolean).join(", "));
-  return people.join("; ") || "Auteur non renseigné";
+      [c.lastName, c.firstName].filter(Boolean).join(", "))
+    .join("; ") || "Auteur non renseigné";
+}
+
+function getTags(item) {
+  return (item.data.tags || []).map(t => t.tag);
 }
 
 function safeUrl(value) {
@@ -141,122 +144,223 @@ function safeUrl(value) {
   }
 }
 
+function fallback(data) {
+  const source = [
+    data.publicationTitle || data.bookTitle,
+    data.volume ? "vol. " + data.volume : "",
+    data.issue ? "n° " + data.issue : "",
+    data.pages ? "p. " + data.pages : "",
+    data.publisher || ""
+  ].filter(Boolean).join(", ");
+
+  return `${getAuthors(data)} (${getYear(data.date)}). ` +
+    `${data.title || "Sans titre"}. ${source}`;
+}
+
+function bibliography(item) {
+  const div = document.createElement("div");
+
+  if (typeof item.bib === "string" && item.bib.trim()) {
+    const doc = new DOMParser().parseFromString(
+      item.bib, "text/html"
+    );
+
+    // Nettoyage du HTML fourni par Zotero
+    doc.querySelectorAll(
+      "script,style,iframe,object,embed,form,svg,math,link,meta"
+    ).forEach(node => node.remove());
+
+    doc.querySelectorAll("*").forEach(node => {
+      for (const attr of [...node.attributes]) {
+        const name = attr.name.toLowerCase();
+        if (
+          name.startsWith("on") ||
+          name === "style" ||
+          name === "srcdoc" ||
+          (name === "href" && !safeUrl(attr.value))
+        ) {
+          node.removeAttribute(attr.name);
+        }
+      }
+      if (node.tagName === "A") {
+        node.target = "_blank";
+        node.rel = "noopener noreferrer";
+      }
+    });
+
+    while (doc.body.firstChild) {
+      div.appendChild(doc.body.firstChild);
+    }
+  } else {
+    div.textContent = fallback(item.data);
+  }
+
+  return div;
+}
+
+function updateCounters() {
+  el("countAll").textContent = references.length;
+
+  el("countRMPR").textContent = references.filter(
+    item => getTags(item).includes("RMPR")
+  ).length;
+
+  el("countRNS").textContent = references.filter(
+    item => getTags(item).includes("RNS")
+  ).length;
+}
+
 function render() {
-  const search = document.getElementById("search")
-    .value.toLocaleLowerCase("fr").trim();
-  const tag = document.getElementById("tag").value;
-  const container = document.getElementById("results");
-  container.replaceChildren();
+  const search = el("search").value
+    .toLocaleLowerCase("fr").trim();
+  const tag = el("tag").value;
 
   const filtered = references.filter(item => {
     const d = item.data;
-    const itemTags = (d.tags || []).map(t => t.tag);
-    const matchesTag =
-      tag === "ALL" || itemTags.includes(tag);
-    const searchable = [
-      authors(d), d.title, d.date,
+
+    if (tag !== "ALL" && !getTags(item).includes(tag)) {
+      return false;
+    }
+
+    const text = [
+      getAuthors(d), d.title, d.date,
       d.publicationTitle, d.bookTitle,
       d.publisher, d.DOI
     ].join(" ").toLocaleLowerCase("fr");
-    return matchesTag && searchable.includes(search);
+
+    return text.includes(search);
   });
 
   filtered.sort((a, b) => {
-    const ya = parseInt(getYear(a.data.date)) || 0;
-    const yb = parseInt(getYear(b.data.date)) || 0;
+    const ya = parseInt(getYear(a.data)) || 0;
+    const yb = parseInt(getYear(b.data)) || 0;
     return yb - ya ||
-      (a.data.title || "").localeCompare(b.data.title || "");
+      (a.data.title || "").localeCompare(
+        b.data.title || "", "fr"
+      );
   });
 
-  document.getElementById("status").textContent =
-    `${filtered.length} références affichées sur ` +
-    `${references.length} références distinctes.`;
-
+  const fragment = document.createDocumentFragment();
   let currentYear = "";
 
   for (const item of filtered) {
-    const d = item.data;
-    const year = getYear(d.date);
+    const year = getYear(item.data.date);
 
     if (year !== currentYear) {
       const heading = document.createElement("h2");
       heading.className = "year";
       heading.textContent = year;
-      container.appendChild(heading);
+      fragment.appendChild(heading);
       currentYear = year;
     }
 
-    const div = document.createElement("div");
-    div.className = "reference";
+    const article = document.createElement("article");
+    article.className = "reference";
+    article.appendChild(bibliography(item));
 
-    const text = document.createElement("span");
-    const source = [
-      d.publicationTitle || d.bookTitle,
-      d.volume ? `vol. ${d.volume}` : "",
-      d.issue ? `n° ${d.issue}` : "",
-      d.pages ? `p. ${d.pages}` : "",
-      d.publisher || ""
-    ].filter(Boolean).join(", ");
+    const links = document.createElement("div");
+    links.className = "links";
 
-    text.textContent =
-      `${authors(d)} (${year}). ${d.title || "Sans titre"}. ` +
-      (source ? `${source}. ` : "");
-    div.appendChild(text);
-
-    const doi = d.DOI
+    const doi = item.data.DOI
       ? safeUrl("https://doi.org/" +
-          d.DOI.replace(/^https?:\/\/doi\.org\//i, ""))
+          item.data.DOI.replace(
+            /^https?:\/\/doi\.org\//i, ""
+          ))
       : null;
 
-    const zotero = safeUrl(item.links?.alternate?.href);
-    const target = doi || zotero;
+    const zotero = safeUrl(
+      item.links?.alternate?.href
+    );
 
-    if (target) {
-      const link = document.createElement("a");
-      link.href = target;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = doi ? "DOI" : "Zotero";
-      div.appendChild(link);
+    for (const [url, label] of [
+      [doi, "DOI"],
+      [zotero, "Notice Zotero"]
+    ]) {
+      if (url) {
+        const a = document.createElement("a");
+        a.href = url;
+        a.textContent = label;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        links.appendChild(a);
+      }
     }
 
-    const tagNames = (d.tags || [])
-      .map(t => t.tag).filter(t => TAGS.includes(t));
-    const tagLine = document.createElement("div");
-    tagLine.className = "tags";
-    tagLine.textContent = tagNames.join(" · ");
-    div.appendChild(tagLine);
-
-    container.appendChild(div);
+    article.appendChild(links);
+    fragment.appendChild(article);
   }
+
+  el("results").replaceChildren(fragment);
+
+  el("status").textContent =
+    `${filtered.length} références affichées sur ` +
+    `${references.length} références distinctes.`;
 }
 
 async function load() {
   try {
-    const combined = new Map();
+    const byKey = new Map();
 
     for (const tag of TAGS) {
-      const items = await fetchTag(tag);
-      for (const item of items) {
-        combined.set(item.key, item);
+      let start = 0;
+
+      while (true) {
+        const url = new URL(API);
+
+        url.searchParams.set("tag", tag);
+        url.searchParams.set("format", "json");
+        url.searchParams.set("include", "data,bib");
+        url.searchParams.set("style", STYLE);
+        url.searchParams.set("limit", "100");
+        url.searchParams.set("start", String(start));
+
+        const response = await fetch(url, {
+          headers: { "Zotero-API-Version": "3" }
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Erreur Zotero HTTP ${response.status}`
+          );
+        }
+
+        const batch = await response.json();
+
+        if (!Array.isArray(batch)) {
+          throw new Error("Réponse Zotero inattendue");
+        }
+
+        for (const item of batch) {
+          byKey.set(item.key, item);
+        }
+
+        el("status").textContent =
+          `Chargement ${tag} : ` +
+          `${start + batch.length} références...`;
+
+        if (batch.length < 100) break;
+        start += 100;
       }
     }
 
-    references = Array.from(combined.values());
+    references = [...byKey.values()];
+
+    updateCounters();
     render();
+
   } catch (error) {
-    document.getElementById("status").textContent =
+    el("status").textContent =
       "Impossible de charger la bibliographie : " +
       error.message;
+    console.error(error);
   }
 }
 
-document.getElementById("search")
-  .addEventListener("input", render);
-document.getElementById("tag")
-  .addEventListener("change", render);
+el("search").addEventListener("input", render);
+el("tag").addEventListener("change", render);
 
 load();
 </script>
+
 </body>
 </html>
