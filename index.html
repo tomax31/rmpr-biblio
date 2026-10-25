@@ -3,117 +3,388 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Bibliographie RMPR et RNS</title>
 
 <style>
+:root {
+  --green: #31554b;
+  --light: #edf3ef;
+  --line: #dce4df;
+  --text: #303a35;
+  --link: #246b86;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: Arial, sans-serif;
-  max-width: 1050px;
-  margin: 40px auto;
-  padding: 0 20px;
-  color: #333;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: #f8faf8;
   line-height: 1.6;
 }
-h1, h2 { color: #34534a; }
-.intro { color: #666; }
+
+header {
+  background: var(--green);
+  color: white;
+  padding: 36px 24px;
+}
+
+.header-inner, .container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+header h1 {
+  margin: 8px 0;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 0;
+  color: #e0ece5;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.container {
+  padding: 25px 20px 60px;
+}
 
 .stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 25px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
 }
+
 .stat {
-  background: #f0f5f2;
-  padding: 12px 20px;
+  background: white;
+  border: 1px solid var(--line);
   border-radius: 8px;
+  padding: 15px;
+  text-align: center;
 }
+
 .stat strong {
-  font-size: 1.4em;
-  color: #34534a;
+  display: block;
+  color: var(--green);
+  font-size: 1.8rem;
 }
+
+.stat span {
+  font-size: 0.85rem;
+  color: #65716b;
+}
+
+.toolbar {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin: 25px 0;
+  margin-bottom: 15px;
 }
-input, select {
-  padding: 10px;
-  font-size: 15px;
-  border: 1px solid #ccc;
+
+.controls > * {
+  flex: 1;
+  min-width: 180px;
+}
+
+input, select, button {
+  padding: 10px 12px;
+  font: inherit;
   border-radius: 5px;
+  border: 1px solid #c8d4cd;
 }
-input { flex: 1; min-width: 200px; }
-#status { margin: 20px 0; color: #666; }
-.year {
-  border-bottom: 1px solid #ddd;
-  margin-top: 30px;
+
+input, select {
+  background: white;
 }
+
+button {
+  cursor: pointer;
+  background: var(--green);
+  color: white;
+  border-color: var(--green);
+}
+
+button:hover {
+  background: #203c34;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.actions button {
+  font-size: 0.85rem;
+}
+
+#status {
+  margin: 20px 0;
+  color: #58685e;
+}
+
+#results {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 25px 25px;
+}
+
+.year-group {
+  border-bottom: 1px solid var(--line);
+}
+
+.year-group summary {
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: bold;
+  color: var(--green);
+  padding: 20px 0 12px;
+}
+
+.year-count {
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #777;
+  margin-left: 12px;
+}
+
 .reference {
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+  border-bottom: 1px solid #edf0ed;
   overflow-wrap: anywhere;
 }
-.reference a { color: #246b86; }
-.links { font-size: 0.85em; margin-top: 5px; }
-.links a { margin-right: 15px; }
-footer { margin: 40px 0; color: #777; font-size: 13px; }
+
+.reference:last-child {
+  border-bottom: none;
+}
+
+.bibliography {
+  line-height: 1.7;
+}
+
+.bibliography .csl-entry {
+  margin-bottom: 0;
+}
+
+.bibliography .csl-left-margin {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.bibliography .csl-right-inline {
+  display: inline;
+}
+
+.links {
+  font-size: 0.8rem;
+  margin-top: 7px;
+}
+
+.links a {
+  color: var(--link);
+  margin-right: 16px;
+}
+
+a { color: var(--link); }
+
+footer {
+  max-width: 1100px;
+  margin: 20px auto 40px;
+  padding: 0 20px;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+@media (max-width: 650px) {
+  header h1 { font-size: 1.5rem; }
+  .stats { gap: 6px; }
+  .stat { padding: 10px 4px; }
+  .stat strong { font-size: 1.3rem; }
+  #results { padding: 5px 12px 20px; }
+}
+
+@media print {
+  body {
+    background: white;
+    font-size: 10pt;
+  }
+
+  header {
+    background: white;
+    color: black;
+    padding: 0;
+  }
+
+  header h1 { color: black; }
+  header p { color: #555; }
+
+  .toolbar, .stats, #status,
+  .links, footer {
+    display: none !important;
+  }
+
+  .container { padding: 0; }
+
+  #results {
+    border: none;
+    padding: 0;
+  }
+
+  .year-group:not([open]) > *:not(summary) {
+    display: block !important;
+  }
+
+  .year-group summary {
+    color: black;
+    font-size: 13pt;
+    break-after: avoid;
+    list-style: none;
+  }
+
+  .year-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .reference {
+    break-inside: avoid;
+    border: none;
+    padding: 6px 0;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<h1>Bibliographie des RMPR et RNS</h1>
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">
+      Rencontres Méridionales de Préhistoire Récente
+    </div>
+    <h1>Bibliographie des RMPR et RNS</h1>
+    <p>
+      Bibliographie scientifique alimentée par Zotero
+    </p>
+  </div>
+</header>
 
-<p class="intro">
-Références issues du groupe Zotero
-<a href="https://www.zotero.org/groups/154609/bda_biblio">
-BDA Biblio</a>.
-Bibliographie mise à jour automatiquement.
-</p>
+<div class="container">
 
-<div class="stats">
-  <div class="stat">
-    Total distinct : <strong id="countAll">—</strong>
+  <section class="stats">
+    <div class="stat">
+      <strong id="countAll">—</strong>
+      <span>Références distinctes</span>
+    </div>
+    <div class="stat">
+      <strong id="countRMPR">—</strong>
+      <span>RMPR</span>
+    </div>
+    <div class="stat">
+      <strong id="countRNS">—</strong>
+      <span>RNS</span>
+    </div>
+  </section>
+
+  <section class="toolbar">
+
+    <div class="controls">
+      <input id="search" type="search"
+        placeholder="Auteur, titre, année, mots-clés...">
+
+      <select id="tag" aria-label="Corpus">
+        <option value="ALL">RMPR + RNS</option>
+        <option value="RMPR">RMPR uniquement</option>
+        <option value="RNS">RNS uniquement</option>
+      </select>
+
+      <select id="style" aria-label="Style bibliographique">
+        <option value="iso690-author-date-fr">
+          ISO 690 (auteur-date)
+        </option>
+        <option value="apa">
+          APA
+        </option>
+        <option value="chicago-author-date">
+          Chicago (auteur-date)
+        </option>
+        <option value="vancouver">
+          Vancouver
+        </option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button id="expand">Tout déplier</button>
+      <button id="collapse">Tout replier</button>
+      <button id="print">Imprimer / PDF</button>
+      <button id="writer">Exporter vers Writer</button>
+    </div>
+
+  </section>
+
+  <div id="status" role="status" aria-live="polite">
+    Chargement des références Zotero...
   </div>
-  <div class="stat">
-    RMPR : <strong id="countRMPR">—</strong>
-  </div>
-  <div class="stat">
-    RNS : <strong id="countRNS">—</strong>
-  </div>
+
+  <main id="results"></main>
+
 </div>
-
-<div class="controls">
-  <input id="search" type="search"
-    placeholder="Rechercher un auteur, un titre, une année...">
-
-  <select id="tag">
-    <option value="ALL">RMPR + RNS</option>
-    <option value="RMPR">RMPR uniquement</option>
-    <option value="RNS">RNS uniquement</option>
-  </select>
-</div>
-
-<div id="status">Chargement des références Zotero...</div>
-<main id="results"></main>
 
 <footer>
-Bibliographie ISO 690 (auteur-date), générée par Zotero.
+  Source :
+  <a href="https://www.zotero.org/groups/154609/bda_biblio"
+     target="_blank" rel="noopener">
+    Zotero — BDA Biblio
+  </a>
+  · Bibliographie générée automatiquement.
 </footer>
 
 <script>
 "use strict";
 
+// --------------------------------------------
+// CONFIGURATION
+// --------------------------------------------
+
 const GROUP = 154609;
 const TAGS = ["RMPR", "RNS"];
-const API = `https://api.zotero.org/groups/${GROUP}/items/top`;
-const STYLE = "iso690-author-date-fr";
+const API =
+  `https://api.zotero.org/groups/${GROUP}/items/top`;
+
+const PAGE_SIZE = 100;
 
 let references = [];
+let currentStyle = "";
+let loading = false;
+let requestNumber = 0;
 
 const el = id => document.getElementById(id);
+
+// --------------------------------------------
+// OUTILS
+// --------------------------------------------
 
 function getYear(date) {
   const match = String(date || "").match(
@@ -124,9 +395,14 @@ function getYear(date) {
 
 function getAuthors(data) {
   return (data.creators || [])
-    .filter(c => ["author", "editor"].includes(c.creatorType))
-    .map(c => c.name ||
-      [c.lastName, c.firstName].filter(Boolean).join(", "))
+    .filter(c =>
+      ["author", "editor"].includes(c.creatorType)
+    )
+    .map(c =>
+      c.name ||
+      [c.lastName, c.firstName]
+        .filter(Boolean).join(", ")
+    )
     .join("; ") || "Auteur non renseigné";
 }
 
@@ -137,60 +413,109 @@ function getTags(item) {
 function safeUrl(value) {
   try {
     const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol)
+    return ["http:", "https:"].includes(url.protocol)
       ? url.href : null;
   } catch {
     return null;
   }
 }
 
-function fallback(data) {
+function fallback(d) {
   const source = [
-    data.publicationTitle || data.bookTitle,
-    data.volume ? "vol. " + data.volume : "",
-    data.issue ? "n° " + data.issue : "",
-    data.pages ? "p. " + data.pages : "",
-    data.publisher || ""
+    d.publicationTitle || d.bookTitle,
+    d.volume ? "vol. " + d.volume : "",
+    d.issue ? "n° " + d.issue : "",
+    d.pages ? "p. " + d.pages : "",
+    d.publisher || ""
   ].filter(Boolean).join(", ");
 
-  return `${getAuthors(data)} (${getYear(data.date)}). ` +
-    `${data.title || "Sans titre"}. ${source}`;
+  return `${getAuthors(d)} (${getYear(d.date)}). ` +
+    `${d.title || "Sans titre"}. ${source}`;
+}
+
+// Nettoyage du HTML bibliographique Zotero.
+// Seules les balises de mise en forme sont conservées.
+
+function cleanBibliography(html) {
+  const doc = new DOMParser().parseFromString(
+    html, "text/html"
+  );
+
+  const allowed = new Set([
+    "DIV", "SPAN", "P", "I", "EM",
+    "B", "STRONG", "SUP", "SUB",
+    "BR", "A", "SMALL"
+  ]);
+
+  function cleanNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return document.createTextNode(node.textContent);
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return document.createDocumentFragment();
+    }
+
+    const name = node.tagName;
+
+    if (["SCRIPT", "STYLE", "IFRAME",
+         "OBJECT", "SVG", "FORM"].includes(name)) {
+      return document.createDocumentFragment();
+    }
+
+    const target = allowed.has(name)
+      ? document.createElement(name.toLowerCase())
+      : document.createDocumentFragment();
+
+    if (target.nodeType === Node.ELEMENT_NODE) {
+      if (name === "DIV" || name === "SPAN") {
+        const classes = [
+          "csl-entry", "csl-left-margin",
+          "csl-right-inline", "csl-block"
+        ];
+
+        const selected = classes.filter(c =>
+          node.classList.contains(c)
+        );
+
+        if (selected.length) {
+          target.className = selected.join(" ");
+        }
+      }
+
+      if (name === "A") {
+        const href = safeUrl(node.getAttribute("href"));
+        if (href) {
+          target.href = href;
+          target.target = "_blank";
+          target.rel = "noopener noreferrer";
+        }
+      }
+    }
+
+    for (const child of node.childNodes) {
+      target.appendChild(cleanNode(child));
+    }
+
+    return target;
+  }
+
+  const result = document.createElement("div");
+
+  for (const child of doc.body.childNodes) {
+    result.appendChild(cleanNode(child));
+  }
+
+  return result;
 }
 
 function bibliography(item) {
   const div = document.createElement("div");
+  div.className = "bibliography";
 
-  if (typeof item.bib === "string" && item.bib.trim()) {
-    const doc = new DOMParser().parseFromString(
-      item.bib, "text/html"
-    );
-
-    // Nettoyage du HTML fourni par Zotero
-    doc.querySelectorAll(
-      "script,style,iframe,object,embed,form,svg,math,link,meta"
-    ).forEach(node => node.remove());
-
-    doc.querySelectorAll("*").forEach(node => {
-      for (const attr of [...node.attributes]) {
-        const name = attr.name.toLowerCase();
-        if (
-          name.startsWith("on") ||
-          name === "style" ||
-          name === "srcdoc" ||
-          (name === "href" && !safeUrl(attr.value))
-        ) {
-          node.removeAttribute(attr.name);
-        }
-      }
-      if (node.tagName === "A") {
-        node.target = "_blank";
-        node.rel = "noopener noreferrer";
-      }
-    });
-
-    while (doc.body.firstChild) {
-      div.appendChild(doc.body.firstChild);
-    }
+  if (typeof item.bib === "string" &&
+      item.bib.trim()) {
+    div.appendChild(cleanBibliography(item.bib));
   } else {
     div.textContent = fallback(item.data);
   }
@@ -198,168 +523,409 @@ function bibliography(item) {
   return div;
 }
 
+// --------------------------------------------
+// CHARGEMENT ZOTERO
+// --------------------------------------------
+
+async function fetchTag(tag, style, requestId) {
+  let all = [];
+  let start = 0;
+
+  while (true) {
+    if (requestId !== requestNumber) {
+      return [];
+    }
+
+    const url = new URL(API);
+
+    url.searchParams.set("tag", tag);
+    url.searchParams.set("format", "json");
+    url.searchParams.set("include", "data,bib");
+    url.searchParams.set("style", style);
+    url.searchParams.set("limit", PAGE_SIZE);
+    url.searchParams.set("start", start);
+
+    const response = await fetch(url, {
+      headers: {
+        "Zotero-API-Version": "3"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Erreur Zotero ${response.status} (${tag})`
+      );
+    }
+
+    const batch = await response.json();
+
+    if (!Array.isArray(batch)) {
+      throw new Error("Réponse Zotero inattendue");
+    }
+
+    all.push(...batch);
+
+    if (requestId === requestNumber) {
+      el("status").textContent =
+        `Chargement ${tag} : ${all.length} références...`;
+    }
+
+    if (batch.length < PAGE_SIZE) break;
+
+    start += PAGE_SIZE;
+  }
+
+  return all;
+}
+
+async function loadStyle(style) {
+  const id = ++requestNumber;
+  loading = true;
+
+  el("style").disabled = true;
+  el("print").disabled = true;
+  el("writer").disabled = true;
+
+  el("status").textContent =
+    "Chargement du style bibliographique...";
+
+  try {
+    const combined = new Map();
+
+    for (const tag of TAGS) {
+      const items = await fetchTag(tag, style, id);
+
+      if (id !== requestNumber) return;
+
+      for (const item of items) {
+        combined.set(item.key, item);
+      }
+    }
+
+    if (id !== requestNumber) return;
+
+    references = [...combined.values()];
+    currentStyle = style;
+
+    updateCounters();
+    render();
+
+  } catch (error) {
+    if (id === requestNumber) {
+      el("status").textContent =
+        "Impossible de charger la bibliographie : " +
+        error.message;
+      console.error(error);
+    }
+  } finally {
+    if (id === requestNumber) {
+      loading = false;
+      el("style").disabled = false;
+      el("print").disabled = false;
+      el("writer").disabled = false;
+    }
+  }
+}
+
+// --------------------------------------------
+// COMPTEURS
+// --------------------------------------------
+
 function updateCounters() {
   el("countAll").textContent = references.length;
 
-  el("countRMPR").textContent = references.filter(
-    item => getTags(item).includes("RMPR")
-  ).length;
+  el("countRMPR").textContent =
+    references.filter(item =>
+      getTags(item).includes("RMPR")
+    ).length;
 
-  el("countRNS").textContent = references.filter(
-    item => getTags(item).includes("RNS")
-  ).length;
+  el("countRNS").textContent =
+    references.filter(item =>
+      getTags(item).includes("RNS")
+    ).length;
 }
 
-function render() {
+// --------------------------------------------
+// FILTRAGE ET TRI
+// --------------------------------------------
+
+function getFiltered() {
   const search = el("search").value
     .toLocaleLowerCase("fr").trim();
+
   const tag = el("tag").value;
 
-  const filtered = references.filter(item => {
+  return references.filter(item => {
     const d = item.data;
 
-    if (tag !== "ALL" && !getTags(item).includes(tag)) {
+    if (tag !== "ALL" &&
+        !getTags(item).includes(tag)) {
       return false;
     }
 
     const text = [
-      getAuthors(d), d.title, d.date,
-      d.publicationTitle, d.bookTitle,
-      d.publisher, d.DOI
+      getAuthors(d),
+      d.title,
+      d.date,
+      d.publicationTitle,
+      d.bookTitle,
+      d.publisher,
+      d.DOI,
+      d.ISBN,
+      ...(d.tags || []).map(t => t.tag)
     ].join(" ").toLocaleLowerCase("fr");
 
     return text.includes(search);
-  });
-
-  filtered.sort((a, b) => {
+  }).sort((a, b) => {
+    // Tri chronologique décroissant corrigé
     const ya = parseInt(getYear(a.data.date)) || 0;
     const yb = parseInt(getYear(b.data.date)) || 0;
+
     return yb - ya ||
       (a.data.title || "").localeCompare(
         b.data.title || "", "fr"
       );
   });
+}
+
+// --------------------------------------------
+// AFFICHAGE
+// --------------------------------------------
+
+function createReference(item) {
+  const article = document.createElement("article");
+  article.className = "reference";
+
+  article.appendChild(bibliography(item));
+
+  const links = document.createElement("div");
+  links.className = "links";
+
+  const doiValue = (item.data.DOI || "")
+    .replace(/^https?:\/\/doi\.org\//i, "")
+    .trim();
+
+  const doi = doiValue
+    ? safeUrl("https://doi.org/" + doiValue)
+    : null;
+
+  const zotero = safeUrl(
+    item.links?.alternate?.href
+  );
+
+  for (const [url, label] of [
+    [doi, "DOI"],
+    [zotero, "Notice Zotero"]
+  ]) {
+    if (!url) continue;
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.textContent = label;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    links.appendChild(a);
+  }
+
+  article.appendChild(links);
+  return article;
+}
+
+function render() {
+  const filtered = getFiltered();
+  const container = el("results");
+
+  // Préserver les années précédemment repliées
+  const closedYears = new Set(
+    [...container.querySelectorAll(
+      "details.year-group:not([open])"
+    )].map(d => d.dataset.year)
+  );
 
   const fragment = document.createDocumentFragment();
-  let currentYear = "";
+  const groups = new Map();
 
   for (const item of filtered) {
     const year = getYear(item.data.date);
 
-    if (year !== currentYear) {
-      const heading = document.createElement("h2");
-      heading.className = "year";
-      heading.textContent = year;
-      fragment.appendChild(heading);
-      currentYear = year;
+    if (!groups.has(year)) {
+      groups.set(year, []);
     }
 
-    const article = document.createElement("article");
-    article.className = "reference";
-    article.appendChild(bibliography(item));
-
-    const links = document.createElement("div");
-    links.className = "links";
-
-    const doi = item.data.DOI
-      ? safeUrl("https://doi.org/" +
-          item.data.DOI.replace(
-            /^https?:\/\/doi\.org\//i, ""
-          ))
-      : null;
-
-    const zotero = safeUrl(
-      item.links?.alternate?.href
-    );
-
-    for (const [url, label] of [
-      [doi, "DOI"],
-      [zotero, "Notice Zotero"]
-    ]) {
-      if (url) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.textContent = label;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        links.appendChild(a);
-      }
-    }
-
-    article.appendChild(links);
-    fragment.appendChild(article);
+    groups.get(year).push(item);
   }
 
-  el("results").replaceChildren(fragment);
+  for (const [year, items] of groups) {
+    const details = document.createElement("details");
+    details.className = "year-group";
+    details.dataset.year = year;
+    details.open = !closedYears.has(year);
+
+    const summary = document.createElement("summary");
+    summary.append(document.createTextNode(year));
+
+    const count = document.createElement("span");
+    count.className = "year-count";
+    count.textContent = `(${items.length})`;
+    summary.appendChild(count);
+
+    details.appendChild(summary);
+
+    const content = document.createElement("div");
+    content.className = "year-content";
+
+    for (const item of items) {
+      content.appendChild(createReference(item));
+    }
+
+    details.appendChild(content);
+    fragment.appendChild(details);
+  }
+
+  container.replaceChildren(fragment);
 
   el("status").textContent =
     `${filtered.length} références affichées sur ` +
     `${references.length} références distinctes.`;
 }
 
-async function load() {
-  try {
-    const byKey = new Map();
+// --------------------------------------------
+// EXPORTS
+// --------------------------------------------
 
-    for (const tag of TAGS) {
-      let start = 0;
+function exportHTML() {
+  const filtered = getFiltered();
 
-      while (true) {
-        const url = new URL(API);
+  if (!filtered.length) {
+    alert("Aucune référence à exporter.");
+    return;
+  }
 
-        url.searchParams.set("tag", tag);
-        url.searchParams.set("format", "json");
-        url.searchParams.set("include", "data,bib");
-        url.searchParams.set("style", STYLE);
-        url.searchParams.set("limit", "100");
-        url.searchParams.set("start", String(start));
+  const holder = document.createElement("div");
+  let year = "";
 
-        const response = await fetch(url, {
-          headers: { "Zotero-API-Version": "3" }
-        });
+  for (const item of filtered) {
+    const y = getYear(item.data.date);
 
-        if (!response.ok) {
-          throw new Error(
-            `Erreur Zotero HTTP ${response.status}`
-          );
-        }
-
-        const batch = await response.json();
-
-        if (!Array.isArray(batch)) {
-          throw new Error("Réponse Zotero inattendue");
-        }
-
-        for (const item of batch) {
-          byKey.set(item.key, item);
-        }
-
-        el("status").textContent =
-          `Chargement ${tag} : ` +
-          `${start + batch.length} références...`;
-
-        if (batch.length < 100) break;
-        start += 100;
-      }
+    if (y !== year) {
+      const h = document.createElement("h2");
+      h.textContent = y;
+      holder.appendChild(h);
+      year = y;
     }
 
-    references = [...byKey.values()];
-
-    updateCounters();
-    render();
-
-  } catch (error) {
-    el("status").textContent =
-      "Impossible de charger la bibliographie : " +
-      error.message;
-    console.error(error);
+    const p = document.createElement("div");
+    p.style.marginBottom = "12px";
+    p.appendChild(bibliography(item));
+    holder.appendChild(p);
   }
+
+  const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Bibliographie RMPR RNS</title>
+<style>
+body {
+  font-family: "Liberation Serif", serif;
+  font-size: 11pt;
+  line-height: 1.5;
 }
+h1 { font-size: 16pt; }
+h2 {
+  font-size: 13pt;
+  margin-top: 20pt;
+}
+.csl-entry { margin-bottom: 8pt; }
+</style>
+</head>
+<body>
+<h1>Bibliographie des RMPR et RNS</h1>
+${holder.innerHTML}
+</body>
+</html>`;
+
+  const blob = new Blob([html], {
+    type: "text/html;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "bibliographie_RMPR_RNS.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function printBibliography() {
+  if (!getFiltered().length) {
+    alert("Aucune référence à imprimer.");
+    return;
+  }
+
+  // Déplier temporairement toutes les années
+  const groups = [
+    ...document.querySelectorAll(
+      "details.year-group"
+    )
+  ];
+
+  const previous = groups.map(d => d.open);
+
+  groups.forEach(d => d.open = true);
+
+  const restore = () => {
+    groups.forEach((d, i) => {
+      d.open = previous[i];
+    });
+    window.removeEventListener("afterprint", restore);
+  };
+
+  window.addEventListener("afterprint", restore, {
+    once: true
+  });
+
+  window.print();
+}
+
+// --------------------------------------------
+// ÉVÉNEMENTS
+// --------------------------------------------
 
 el("search").addEventListener("input", render);
 el("tag").addEventListener("change", render);
 
-load();
+el("style").addEventListener("change", e => {
+  loadStyle(e.target.value);
+});
+
+el("expand").addEventListener("click", () => {
+  document.querySelectorAll(
+    "details.year-group"
+  ).forEach(d => d.open = true);
+});
+
+el("collapse").addEventListener("click", () => {
+  document.querySelectorAll(
+    "details.year-group"
+  ).forEach(d => d.open = false);
+});
+
+el("print").addEventListener(
+  "click", printBibliography
+);
+
+el("writer").addEventListener(
+  "click", exportHTML
+);
+
+// Chargement initial
+loadStyle(el("style").value);
+
 </script>
 
 </body>
