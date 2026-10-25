@@ -448,9 +448,14 @@ function cleanBibliography(html) {
   ]);
 
   function cleanNode(node) {
+    
     if (node.nodeType === Node.TEXT_NODE) {
-      return document.createTextNode(node.textContent);
+      const textarea = document.createElement("textarea");
+      textarea.innerHTML = node.textContent;
+    
+      return document.createTextNode(textarea.value);
     }
+
 
     if (node.nodeType !== Node.ELEMENT_NODE) {
       return document.createDocumentFragment();
