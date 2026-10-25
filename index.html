@@ -232,8 +232,8 @@ function render() {
   });
 
   filtered.sort((a, b) => {
-    const ya = parseInt(getYear(a.data)) || 0;
-    const yb = parseInt(getYear(b.data)) || 0;
+    const ya = parseInt(getYear(a.data.date)) || 0;
+    const yb = parseInt(getYear(b.data.date)) || 0;
     return yb - ya ||
       (a.data.title || "").localeCompare(
         b.data.title || "", "fr"
